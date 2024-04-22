@@ -11,6 +11,9 @@ export const User = createParamDecorator(
 
     const user = req.user as UsersModel;
 
+    console.log('req.user', user);
+    console.log('data', data);
+
     if (!user)
       throw new InternalServerErrorException(
         'User 데코레이터는 AccessTokenGuard와 함께 사용해야합니다. Request에 user 프로퍼티가 존재하지 않습니다!',

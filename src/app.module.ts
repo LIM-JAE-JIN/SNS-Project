@@ -29,6 +29,7 @@ import { ImagesModel } from './common/entities/image.entity';
 import { LogMiddleware } from './common/middleware/log.middleware';
 import { ChatsModule } from './chats/chats.module';
 import { ChatsModel } from './chats/entities/chats.entity';
+import { MessagesModel } from './chats/messages/entities/messages.entity';
 
 @Module({
   imports: [
@@ -49,7 +50,13 @@ import { ChatsModel } from './chats/entities/chats.entity';
       username: process.env[ENV_DB_USERNAME_KEY],
       password: process.env[ENV_DB_PASSWORD_KEY],
       database: process.env[ENV_DB_DATABASE_KEY],
-      entities: [PostsModel, UsersModel, ImagesModel, ChatsModel],
+      entities: [
+        PostsModel,
+        UsersModel,
+        ImagesModel,
+        ChatsModel,
+        MessagesModel,
+      ],
       synchronize: true,
     }),
     UsersModule,
