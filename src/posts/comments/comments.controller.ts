@@ -18,6 +18,7 @@ import { UsersModel } from 'src/users/entities/users.entity';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { IsPublicEnum } from 'src/users/const/is-public.const';
+import { IsCommentMineOrAdminGuard } from './guard/is-comment-mine-or-admin.guard';
 
 @Controller('/posts/:postId/comments')
 export class CommentsController {
@@ -65,11 +66,13 @@ export class CommentsController {
   }
 
   @Patch(':id')
+  @UseGuards(IsCommentMineOrAdminGuard)
   patchComment(@Param('id') id: number, @Body() body: UpdateCommentDto) {
     return this.commentsService.updateComment(id, body);
   }
 
   @Delete(':id')
+  @UseGuards(IsCommentMineOrAdminGuard)
   deleteComment(@Param('id') id: number) {
     return this.commentsService.deleteComment(id);
   }

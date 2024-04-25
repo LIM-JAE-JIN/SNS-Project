@@ -28,6 +28,7 @@ import { Roles } from 'src/users/decorator/roles.decorator';
 import { RolesEnum } from 'src/users/const/roles.const';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { IsPublicEnum } from 'src/users/const/is-public.const';
+import { IsPostMineOrAdminGuard } from './guard/is-post-mine-or-admin.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -95,6 +96,7 @@ export class PostsController {
   // 4) PUT /posts:id
   //    id에 해당되는 POST를 변경한다.
   @Patch(':id')
+  @UseGuards(IsPostMineOrAdminGuard)
   patchPost(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdatepostDto,
