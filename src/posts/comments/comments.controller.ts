@@ -16,6 +16,8 @@ import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
+import { IsPublicEnum } from 'src/users/const/is-public.const';
 
 @Controller('/posts/:postId/comments')
 export class CommentsController {
@@ -39,6 +41,7 @@ export class CommentsController {
    */
 
   @Get()
+  @IsPublic(IsPublicEnum.ISPUBLIC)
   getComments(
     @Param('postId') postId: number,
     @Query() query: BasePaginationDto,
@@ -47,12 +50,12 @@ export class CommentsController {
   }
 
   @Get('/:id')
+  @IsPublic(IsPublicEnum.ISPUBLIC)
   getCommnetById(@Param('id') id: number) {
     return this.commentsService.getCommentById(id);
   }
 
   @Post()
-  @UseGuards(AccessTokenGuard)
   createComment(
     @Param('postId') postId: number,
     @Body() body: CreateCommentDto,
@@ -62,13 +65,11 @@ export class CommentsController {
   }
 
   @Patch(':id')
-  @UseGuards(AccessTokenGuard)
   patchComment(@Param('id') id: number, @Body() body: UpdateCommentDto) {
     return this.commentsService.updateComment(id, body);
   }
 
   @Delete(':id')
-  @UseGuards(AccessTokenGuard)
   deleteComment(@Param('id') id: number) {
     return this.commentsService.deleteComment(id);
   }
