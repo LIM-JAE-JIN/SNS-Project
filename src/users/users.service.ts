@@ -2,12 +2,16 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersModel } from './entities/users.entity';
 import { Repository } from 'typeorm';
+import { UserFollowsModel } from './entities/user-follows.entity';
+import { privateDecrypt } from 'crypto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UsersModel)
     private readonly usersRepository: Repository<UsersModel>,
+    @InjectRepository(UserFollowsModel)
+    private readonly userFollowsRepository: Repository<UserFollowsModel>,
   ) {}
 
   async createUser(user: Pick<UsersModel, 'email' | 'nickname' | 'password'>) {
@@ -49,5 +53,76 @@ export class UsersService {
         email,
       },
     });
+  }
+
+  async followUser(followerId: number, followeeId: number) {
+    const result = await this.userFollowsRepository.save({
+      follower: {
+        id: followerId,
+      },
+      followee: {
+        id: followeeId,
+      },
+    });
+
+    return true;
+  }
+
+  async getFollowers(userId: number, includeNotConfirmed: boolean) {
+    const where = {
+      followee: {
+        id: userId,
+      },
+    };
+
+    if (!includeNotConfirmed) {
+      where['isConfirmed'] = true;
+    }
+
+    const result = await this.userFollowsRepository.find({
+      where,
+      relations: {
+        follower: true,
+        followee: true,
+      },
+    });
+
+    return result.map((user) => ({
+      id: user.follower.id,
+      nickname: user.follower.nickname,
+      email: user.follower.email,
+      isConfirmed: user.isConfirmed,
+    }));
+  }
+
+  async confirmFollow(followerId: number, followeeId: number) {
+    const existing = await this.userFollowsRepository.findOne({
+      where: {
+        follower: { id: followerId },
+        followee: { id: followeeId },
+      },
+      relations: {
+        follower: true,
+        followee: true,
+      },
+    });
+    if (!existing)
+      throw new BadRequestException('존재하지 않는 팔로우 요청입니다.');
+
+    await this.userFollowsRepository.save({
+      ...existing,
+      isConfirmed: true,
+    });
+
+    return true;
+  }
+
+  async deleteFollow(followerId: number, followeeId: number) {
+    await this.userFollowsRepository.delete({
+      follower: { id: followerId },
+      followee: { id: followeeId },
+    });
+
+    return true;
   }
 }
