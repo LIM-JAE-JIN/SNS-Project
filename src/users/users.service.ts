@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersModel } from './entities/users.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { UserFollowsModel } from './entities/user-follows.entity';
 import { privateDecrypt } from 'crypto';
 
@@ -13,6 +13,18 @@ export class UsersService {
     @InjectRepository(UserFollowsModel)
     private readonly userFollowsRepository: Repository<UserFollowsModel>,
   ) {}
+
+  getUsersRepository(qr?: QueryRunner) {
+    return qr
+      ? qr.manager.getRepository<UsersModel>(UsersModel)
+      : this.usersRepository;
+  }
+
+  getUserFollowsRepository(qr?: QueryRunner) {
+    return qr
+      ? qr.manager.getRepository<UserFollowsModel>(UserFollowsModel)
+      : this.userFollowsRepository;
+  }
 
   async createUser(user: Pick<UsersModel, 'email' | 'nickname' | 'password'>) {
     // 1) nickname 중복이 없는지 확인
@@ -55,8 +67,10 @@ export class UsersService {
     });
   }
 
-  async followUser(followerId: number, followeeId: number) {
-    const result = await this.userFollowsRepository.save({
+  async followUser(followerId: number, followeeId: number, qr?: QueryRunner) {
+    const userFollowsRepository = this.getUserFollowsRepository(qr);
+
+    await userFollowsRepository.save({
       follower: {
         id: followerId,
       },
@@ -95,8 +109,14 @@ export class UsersService {
     }));
   }
 
-  async confirmFollow(followerId: number, followeeId: number) {
-    const existing = await this.userFollowsRepository.findOne({
+  async confirmFollow(
+    followerId: number,
+    followeeId: number,
+    qr?: QueryRunner,
+  ) {
+    const userFollowsRepository = this.getUserFollowsRepository(qr);
+
+    const existing = await userFollowsRepository.findOne({
       where: {
         follower: { id: followerId },
         followee: { id: followeeId },
@@ -109,7 +129,7 @@ export class UsersService {
     if (!existing)
       throw new BadRequestException('존재하지 않는 팔로우 요청입니다.');
 
-    await this.userFollowsRepository.save({
+    await userFollowsRepository.save({
       ...existing,
       isConfirmed: true,
     });
@@ -117,12 +137,38 @@ export class UsersService {
     return true;
   }
 
-  async deleteFollow(followerId: number, followeeId: number) {
-    await this.userFollowsRepository.delete({
+  async deleteFollow(followerId: number, followeeId: number, qr?: QueryRunner) {
+    const userFollowsRepository = this.getUserFollowsRepository(qr);
+
+    await userFollowsRepository.delete({
       follower: { id: followerId },
       followee: { id: followeeId },
     });
 
     return true;
+  }
+
+  async incrementFollowCount(
+    followId: number,
+    isFollower: boolean,
+    qr?: QueryRunner,
+  ) {
+    const usersRepository = this.getUsersRepository(qr);
+
+    const followChk = isFollower ? 'followerCount' : 'followeeCount';
+
+    await usersRepository.increment({ id: followId }, followChk, 1);
+  }
+
+  async decrementFollowCount(
+    followId: number,
+    isFollower: boolean,
+    qr?: QueryRunner,
+  ) {
+    const usersRepository = this.getUsersRepository(qr);
+
+    const followChk = isFollower ? 'followerCount' : 'followeeCount';
+
+    await usersRepository.decrement({ id: followId }, followChk, 1);
   }
 }
