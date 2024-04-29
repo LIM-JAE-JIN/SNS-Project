@@ -17,11 +17,11 @@
 <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
 <img src="https://img.shields.io/badge/Web Socket-010101?style=for-the-badge&logo=socketdotio&logoColor=white">
 <img src="https://img.shields.io/badge/multer-4479A1?style=for-the-badge&logo=multer&logoColor=white">
-<img src="https://img.shields.io/badge/rxjs-4479A1?style=for-the-badge&logo=rxjs&logoColor=white">
+<img src="https://img.shields.io/badge/rxjs-fef?style=for-the-badge&logo=rxjs&logoColor=white">
 <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white">
 <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white">
 <img src="https://img.shields.io/badge/Postman-181717?style=for-the-badge&logo=Postman&logoColor=white">
-<img src="https://img.shields.io/badge/PaAdmin-181717?style=for-the-badge&logo=Pgadmin&logoColor=white">
+<img src="https://img.shields.io/badge/PgAdmin-181717?style=for-the-badge&logo=Pgadmin&logoColor=white">
 </div>
 
 <br>
