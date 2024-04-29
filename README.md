@@ -20,8 +20,8 @@
 <img src="https://img.shields.io/badge/rxjs-fef?style=for-the-badge&logo=rxjs&logoColor=white">
 <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white">
 <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white">
-<img src="https://img.shields.io/badge/Postman-181717?style=for-the-badge&logo=Postman&logoColor=white">
-<img src="https://img.shields.io/badge/PgAdmin-181717?style=for-the-badge&logo=Pgadmin&logoColor=white">
+<img src="https://img.shields.io/badge/Postman-orenge?style=for-the-badge&logo=Postman&logoColor=white">
+<img src="https://img.shields.io/badge/PgAdmin-gray?style=for-the-badge&logo=Pgadmin&logoColor=white">
 </div>
 
 <br>
